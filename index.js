@@ -14,7 +14,7 @@ const crypto = require("crypto");
 const CONFIG = {
   // 身份认证
   UUID: process.env.UUID || "9afd1229-b893-40c1-84dd-51e7ce204913",
-  PORT: parseInt(process.env.PORT) || 3000,
+  PORT: parseInt(process.env.PORT) || 8080,
 
   // Argo 隧道配置
   ARGO_DOMAIN: process.env.ARGO_DOMAIN?.trim() || "",
