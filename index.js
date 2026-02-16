@@ -13,7 +13,7 @@ const CONFIG = {
   PORT: parseInt(process.env.PORT) || 8080,
   XRAY_PORT: 3000, 
   RAIL_DOMAIN: process.env.RAILWAY_STATIC_URL || "nodejs-railway-production-fc83.up.railway.app",
-  SUB_PATH: (process.env.SUB_PATH || "sub").replace(/^\/+/, ""),
+  RAIL_DOMAIN: process.env.RAILWAY_STATIC_URL || req.headers.host || "localhost",
   FILE_PATH: "./bin_v184_final",
 };
 
