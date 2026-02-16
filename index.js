@@ -19,6 +19,7 @@ const CONFIG = {
 
 if (!fs.existsSync(CONFIG.FILE_PATH)) fs.mkdirSync(CONFIG.FILE_PATH, { recursive: true });
 
+// 清理旧进程（避免端口占用）
 function cleanup() {
   try {
     execSync("pkill -9 xray 2>/dev/null || true", { stdio: 'ignore' });
@@ -31,10 +32,11 @@ async function boot() {
   try {
     console.log("[INFO] 🚀 正在部署全自动适配版 v1.8.4...");
     
-    cleanup();
+    cleanup(); // 启动前清理
     
     const xrayPath = path.join(CONFIG.FILE_PATH, 'xray');
     
+    // 只在首次下载
     if (!fs.existsSync(xrayPath)) {
       console.log("[下载] Xray v1.8.4...");
       const response = await axios({ url: xrayZipUrl, method: 'GET', responseType: 'stream' });
