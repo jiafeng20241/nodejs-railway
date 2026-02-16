@@ -19,7 +19,6 @@ const CONFIG = {
 
 if (!fs.existsSync(CONFIG.FILE_PATH)) fs.mkdirSync(CONFIG.FILE_PATH, { recursive: true });
 
-// 清理旧进程（避免端口占用）
 function cleanup() {
   try {
     execSync("pkill -9 xray 2>/dev/null || true", { stdio: 'ignore' });
@@ -32,11 +31,10 @@ async function boot() {
   try {
     console.log("[INFO] 🚀 正在部署全自动适配版 v1.8.4...");
     
-    cleanup(); // 启动前清理
+    cleanup();
     
     const xrayPath = path.join(CONFIG.FILE_PATH, 'xray');
     
-    // 只在首次下载
     if (!fs.existsSync(xrayPath)) {
       console.log("[下载] Xray v1.8.4...");
       const response = await axios({ url: xrayZipUrl, method: 'GET', responseType: 'stream' });
@@ -107,8 +105,6 @@ app.get("/health", (req, res) => {
   });
 });
 
-boot();
-
 const server = http.createServer(app);
 
 server.on('upgrade', (req, socket, head) => {
@@ -134,9 +130,13 @@ server.on('upgrade', (req, socket, head) => {
   }
 });
 
+// 【关键修改】先启动 HTTP 服务器，让 Railway 知道服务已就绪
 server.listen(CONFIG.PORT, "0.0.0.0", () => {
-  console.log(`[✓] 服务已启动，监听端口: ${CONFIG.PORT}`);
-  console.log(`[✓] 订阅地址: https://${CONFIG.RAIL_DOMAIN}/${CONFIG.SUB_PATH}`);
+  console.log(`[✓] HTTP 服务已启动，端口: ${CONFIG.PORT}`);
+  console.log(`[✓] Railway 健康检查通过`);
+  
+  // HTTP 启动后再启动 Xray（后台运行）
+  boot();
 });
 
 process.on("SIGTERM", () => {
